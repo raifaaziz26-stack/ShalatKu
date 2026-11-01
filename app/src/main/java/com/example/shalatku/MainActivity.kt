@@ -16,11 +16,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.shalatku.ui.theme.ShalatKuTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,9 +36,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ShalatkuApp() {
-    var selected by remember { mutableStateOf(0) }
-    val donePrayers = remember { mutableStateListOf<String>() }
+fun ShalatkuApp(
+    viewModel: SalatKuViewModel = viewModel()
+) {
+    // Gunakan rememberSaveable agar navigasi tab tidak reset saat HP diputar/dirotasi
+    var selected by rememberSaveable { mutableStateOf(0) }
 
     Scaffold(
         bottomBar = {
@@ -66,16 +68,28 @@ fun ShalatkuApp() {
     ) { padding ->
         val contentModifier = Modifier.padding(padding)
         when (selected) {
-            0 -> HomeScreen(samplePrayers, contentModifier)
-            1 -> TrackerScreen(
+            0 -> HomeScreen(
                 prayers = samplePrayers,
-                donePrayers = donePrayers,
-                onToggle = { name ->
-                    if (name in donePrayers) donePrayers.remove(name) else donePrayers.add(name)
-                },
+                selectedDay = viewModel.selectedDay,
+                onSelectDay = viewModel::selectDay,
                 modifier = contentModifier
             )
-            2 -> TasbihScreen(contentModifier)
+            1 -> TrackerScreen(
+                prayers = samplePrayers,
+                donePrayers = viewModel.donePrayers,
+                onToggle = viewModel::togglePrayer,
+                onClear = viewModel::clearPrayers, // Tambahan untuk HW12 Part A
+                modifier = contentModifier
+            )
+            2 -> TasbihScreen(
+                count = viewModel.tasbihCount,
+                rounds = viewModel.completedRounds,
+                target = viewModel.roundSize,          // Tambahan untuk HW12 Part B
+                onIncrement = viewModel::incrementTasbih,
+                onReset = viewModel::resetTasbih,
+                onSetTarget = viewModel::updateRoundSize, // Tambahan untuk HW12 Part B
+                modifier = contentModifier
+            )
         }
     }
 }

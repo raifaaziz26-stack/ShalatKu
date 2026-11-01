@@ -16,7 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun HomeScreen(prayers: List<Prayer>, modifier: Modifier = Modifier) {
+fun HomeScreen(
+    prayers: List<Prayer>,
+    selectedDay: Int = 0,               // Parameter baru untuk M12
+    onSelectDay: (Int) -> Unit = {},    // Parameter baru untuk M12
+    modifier: Modifier = Modifier
+) {
     Column(modifier.padding(16.dp)) {
         Text("Shalatku", style = MaterialTheme.typography.headlineMedium)
         Text("Today's prayer times", style = MaterialTheme.typography.bodyMedium)

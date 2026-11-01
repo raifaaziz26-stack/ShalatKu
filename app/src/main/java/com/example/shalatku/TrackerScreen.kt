@@ -1,10 +1,13 @@
 package com.example.shalatku
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,15 +21,29 @@ fun TrackerScreen(
     prayers: List<Prayer>,
     donePrayers: List<String>,
     onToggle: (String) -> Unit,
+    onClear: () -> Unit, // Tambahan HW12 Part A
     modifier: Modifier = Modifier
 ) {
-    Column(modifier.padding(16.dp)) {
-        Text("Prayer Tracker", style = MaterialTheme.typography.headlineMedium)
+    Column(modifier = modifier.padding(16.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Prayer Tracker", style = MaterialTheme.typography.headlineMedium)
+
+            // HW12 Part A: Tombol Clear All
+            Button(onClick = onClear) {
+                Text("Clear All")
+            }
+        }
+
         Text(
             "${donePrayers.size} of ${prayers.size} prayers done today",
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(Modifier.height(16.dp))
+
         prayers.forEach { prayer ->
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
